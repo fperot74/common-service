@@ -77,6 +77,34 @@ type Authorization struct {
 	TargetGroupName *string `json:"target_group_name,omitempty"`
 }
 
+// RealmContextKey struct
+type RealmContextKey struct {
+	ID              string
+	Label           string
+	IdentitiesRealm string
+	CustomerRealm   string
+	Config          ContextKeyConfiguration
+}
+
+// ContextKeyConfiguration struct
+type ContextKeyConfiguration struct {
+	IdentificationURI *string `json:"identification-uri"`
+	Onboarding        *struct {
+		ClientID     *string `json:"client-id"`
+		RedirectURI  *string `json:"redirect-uri"`
+		RedirectMode *string `json:"redirect-mode"`
+	} `json:"onboarding"`
+	Accreditation *struct {
+		EmailThemeRealm *string `json:"email-theme-realm"`
+	} `json:"accreditation"`
+	AutoVoucher *struct {
+		ServiceType            *string `json:"service-type"`
+		Validity               *string `json:"validity"`
+		AccreditationRequested *string `json:"accreditation-requested"`
+		BilledRealm            *string `json:"billed-realm"`
+	}
+}
+
 // NewRealmConfiguration returns the realm configuration from its JSON representation
 func NewRealmConfiguration(confJSON string) (RealmConfiguration, error) {
 	var conf RealmConfiguration
@@ -94,6 +122,13 @@ func NewRealmConfiguration(confJSON string) (RealmConfiguration, error) {
 // NewRealmAdminConfiguration returns the realm admin configuration from its JSON representation
 func NewRealmAdminConfiguration(configJSON string) (RealmAdminConfiguration, error) {
 	var conf RealmAdminConfiguration
+	var err = json.Unmarshal([]byte(configJSON), &conf)
+	return conf, err
+}
+
+// NewContextKeyConfiguration returns the context key configuration from its JSON representation
+func NewContextKeyConfiguration(configJSON string) (ContextKeyConfiguration, error) {
+	var conf ContextKeyConfiguration
 	var err = json.Unmarshal([]byte(configJSON), &conf)
 	return conf, err
 }
